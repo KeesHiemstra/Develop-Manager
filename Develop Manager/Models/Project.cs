@@ -2,10 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace Develop_Manager.Models
 {
@@ -17,6 +20,7 @@ namespace Develop_Manager.Models
     public string ProjectFile { get; set; }
     public string ProjectFullName { get; set; }
     public string ProjectGuid { get; set; }
+    public string OutputType { get; set; }
     public bool DoesExists { get; set; }
     public bool HasReadMe { get; set; }
     public string HistoryFile { get; set; }
@@ -68,7 +72,7 @@ namespace Develop_Manager.Models
       HasReadMe = File.Exists($"{ProjectPath}\\README.md");
       try
       {
-        IEnumerable<string> history = 
+        IEnumerable<string> history =
           Directory.EnumerateFiles(ProjectPath, "History.txt", SearchOption.AllDirectories);
         if (!(history.Count() == 0))
         {
@@ -76,8 +80,41 @@ namespace Develop_Manager.Models
         }
       }
       catch { }
+
+      ReadProjectFile(ProjectFullName);
     }
 
+    private void ReadProjectFile(string fileName)
+    {
+      //XmlDocument xml = new XmlDocument();
+      //xml.Load(fileName);
 
+      //var nodeList = xml.DocumentElement.SelectNodes("Project");
+
+      //OutputType = node.Attributes["OutputType"].ToString();
+
+      /* https://stackoverflow.com/questions/1191151/reading-the-list-of-references-from-csproj-files
+      XNamespace msbuild = "http://schemas.microsoft.com/developer/msbuild/2003";
+      XDocument projDefinition = XDocument.Load(fileName);
+      IEnumerable<string> references = projDefinition
+          .Element(msbuild + "Project")
+          .Elements(msbuild + "ItemGroup")
+          .Elements(msbuild + "Reference")
+          .Select(refElem => refElem.Value);
+      */
+
+      /* https://stackoverflow.com/questions/4171451/selectsinglenode-returns-null-when-tag-contains-xmlnamespace/4171468#4171468
+      XmlNamespaceManager ns = new XmlNamespaceManager(xml.NameTable);
+      ns.AddNamespace("msbld", "http://schemas.microsoft.com/developer/msbuild/2003");
+      XmlNode node = xml.SelectSingleNode("//msbld:Project", ns);
+      */
+
+      string project;
+
+      using (StreamReader stream = new StreamReader(fileName))
+      {
+        project = stream.ReadToEnd();
+      }
+    }
   }
 }
