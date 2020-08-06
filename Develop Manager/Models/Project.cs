@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,10 +13,19 @@ namespace Develop_Manager.Models
   {
     public string InitGuid { get; set; }
     public string Name { get; set; }
-    public string OutputPath { get; set; }
+    public string ProjectPath { get; set; }
+    public string ProjectFile { get; set; }
+    public string ProjectFullName { get; set; }
     public string ProjectGuid { get; set; }
     public bool DoesExists { get; set; }
+    public bool HasReadMe { get; set; }
+    public string HistoryFile { get; set; }
 
+    /// <summary>
+    /// Information from Solution file.
+    /// </summary>
+    /// <param name="line"></param>
+    /// <returns></returns>
     public bool ReadSolutionProjects(string line)
     {
       //Project("{<Guid>}") = "<Name>", "<File>", "<Guid>"
@@ -33,7 +45,7 @@ namespace Develop_Manager.Models
           return false;
         }
         Name = array[0].Trim().Replace("\"", "");
-        OutputPath = array[1].Trim().Replace("\"", "");
+        ProjectFile = array[1].Trim().Replace("\"", "");
         ProjectGuid = array[2].Trim().Replace("\"", "");
       }
       else
@@ -43,5 +55,29 @@ namespace Develop_Manager.Models
 
       return result;
     }
+
+    /// <summary>
+    /// Information from directories.
+    /// </summary>
+    /// <param name="folder"></param>
+    internal void GetProjectDetails(string folder)
+    {
+      ProjectFullName = $"{folder}\\{ProjectFile}";
+      FileInfo info = new FileInfo(ProjectFullName);
+      ProjectPath = info.DirectoryName;
+      HasReadMe = File.Exists($"{ProjectPath}\\README.md");
+      try
+      {
+        IEnumerable<string> history = 
+          Directory.EnumerateFiles(ProjectPath, "History.txt", SearchOption.AllDirectories);
+        if (!(history.Count() == 0))
+        {
+          HistoryFile = history.First();
+        }
+      }
+      catch { }
+    }
+
+
   }
 }

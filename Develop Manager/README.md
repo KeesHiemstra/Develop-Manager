@@ -10,4 +10,6 @@ I created a new plain `Console app` and the algorithm was working.
 
 ### Wish list
 
+- [ ] Path is hard coded.
+- [ ] Changing the project and back gave a new row.
 - [ ] Make a project json with some information.

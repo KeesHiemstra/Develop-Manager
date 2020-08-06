@@ -12,10 +12,10 @@ namespace Develop_Manager.Models
     //Solution name
     public string Name { get; set; }
     //File path
-    public string Folder { get; set; }
+    public string SolutionPath { get; set; }
     //File name (without path, including extension)
-    public string FileName { get; set; }
-    public string FileFullName { get { return $"{Folder}\\{FileName}"; } }
+    public string SolutionFile { get; set; }
+    public string SolutionFull { get { return $"{SolutionPath}\\{SolutionFile}"; } }
     public string SolutionGuid { get; set; }
     public bool HasGit { get; set; }
     public List<string> Folders { get; set; } = new List<string>();
@@ -25,9 +25,9 @@ namespace Develop_Manager.Models
     public Solution(string solutionPath)
     {
       DirectoryInfo info = new DirectoryInfo(solutionPath);
-      FileName = info.Name;
-      Name = FileName.Replace(".sln", "");
-      Folder = info.Parent.FullName;
+      SolutionFile = info.Name;
+      Name = SolutionFile.Replace(".sln", "");
+      SolutionPath = info.Parent.FullName;
       CollectProjectsFromSolution();
       CollectFolders();
       CheckProjectFolders();
@@ -36,7 +36,7 @@ namespace Develop_Manager.Models
     private void CollectProjectsFromSolution()
     {
       string line;
-      using (StreamReader stream = File.OpenText(FileFullName))
+      using (StreamReader stream = File.OpenText(SolutionFull))
       {
         while (!stream.EndOfStream)
         {
@@ -61,7 +61,7 @@ namespace Develop_Manager.Models
 
     private void CollectFolders()
     {
-      IEnumerable<string> folders = Directory.EnumerateDirectories(Folder);
+      IEnumerable<string> folders = Directory.EnumerateDirectories(SolutionPath);
       foreach (string item in folders)
       {
         DirectoryInfo info = new DirectoryInfo(item);
@@ -83,12 +83,13 @@ namespace Develop_Manager.Models
     {
       foreach (Project item in Projects)
       {
-        item.DoesExists = Folders.Contains(item.Name);
+        item.DoesExists = Folders.Exists(x => x.ToLower() == item.Name.ToLower());
+        item.GetProjectDetails(SolutionPath);
       }
 
       foreach (string item in Folders)
       {
-        if (Projects.Where(x => x.Name == item).Count() == 0)
+        if (Projects.Where(x => x.Name.ToLower() == item.ToLower()).Count() == 0)
         {
           MissedProjectLinks.Add(item);
         }
