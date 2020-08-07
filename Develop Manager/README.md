@@ -13,5 +13,5 @@ The environ setting GitDev point to the rootfolder where the sources located.
 ### Wish list
 
 - [X] Path is hard coded.
-- [ ] Changing the project and back gave a new row.
+- [X] Changing the project and back gave a new row.
 - [ ] Make a project json with some information.

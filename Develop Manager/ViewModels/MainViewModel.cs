@@ -19,8 +19,8 @@ namespace Develop_Manager.ViewModels
     Solution Solution;
     Project Project;
 
-    public string RootFolder { get; set; } = 
-      Environment.GetEnvironmentVariable("GitDev").Replace("\\", "\\\\");
+    public string RootFolder { get; set; } =
+      Environment.GetEnvironmentVariable("GitDev");//.Replace("\\", "\\\\");
 
     public MainViewModel(MainWindow mainView)
     {
@@ -205,10 +205,16 @@ namespace Develop_Manager.ViewModels
 
       projectDetails.Children.Add(LabelBlock("", $"Project {Project.Name}"));
       projectDetails.Children.Add(LabelBlock("Initial guid", Project.InitGuid));
+      projectDetails.Children.Add(LabelBlock("Solution guid", Project.SolutionProjectGuid));
       projectDetails.Children.Add(LabelBlock("Project guid", Project.ProjectGuid));
       projectDetails.Children.Add(LabelBlock("Project file", Project.ProjectFile));
+      projectDetails.Children.Add(LabelBlock("Output type", Project.OutputType));
+      projectDetails.Children.Add(LabelBlock("Root Namespace", Project.RootNamespace));
+      projectDetails.Children.Add(LabelBlock("AssemblyName", Project.AssemblyName));
+      projectDetails.Children.Add(LabelBlock("Framework", Project.TargetFrameworkVersion));
+
       projectDetails.Children.Add(LabelBlock("README.md", Project.HasReadMe ?
-        "Exists" : "Doesn't exists"));
+        "Exist" : "Doesn't exist"));
       projectDetails.Children.Add(LabelBlock("History file", Project.HistoryFile ?? 
         "Doesn't exist"));
 
@@ -221,7 +227,10 @@ namespace Develop_Manager.ViewModels
         Padding = new Thickness(5),
         Child = projectDetails,
       };
-
+      if (MainV.ProjectStackPanel.Children.Count > 0)
+      {
+        MainV.ProjectStackPanel.Children.Clear();
+      }
       MainV.ProjectStackPanel.Children.Add(border);
     }
 

@@ -14,16 +14,20 @@ namespace Develop_Manager.Models
 {
   class Project
   {
-    public string InitGuid { get; set; }
-    public string Name { get; set; }
-    public string ProjectPath { get; set; }
-    public string ProjectFile { get; set; }
-    public string ProjectFullName { get; set; }
-    public string ProjectGuid { get; set; }
-    public string OutputType { get; set; }
-    public bool DoesExists { get; set; }
-    public bool HasReadMe { get; set; }
-    public string HistoryFile { get; set; }
+    public string InitGuid { get; set; } //From solution
+    public string Name { get; set; } //From solution
+    public string ProjectPath { get; set; } //From solution
+    public string ProjectFile { get; set; } //From solution
+    public string ProjectFullName { get; set; } //From solution
+    public string SolutionProjectGuid { get; set; } //From solution
+    public string ProjectGuid { get; set; } //From project
+    public string OutputType { get; set; } //From project
+    public string RootNamespace { get; set; } //From project
+    public string AssemblyName { get; set; } //From project
+    public string TargetFrameworkVersion { get; set; } //From project
+    public bool DoesExists { get; set; } //Extern
+    public bool HasReadMe { get; set; } //Extern
+    public string HistoryFile { get; set; } //Extern
 
     /// <summary>
     /// Information from Solution file.
@@ -50,7 +54,7 @@ namespace Develop_Manager.Models
         }
         Name = array[0].Trim().Replace("\"", "");
         ProjectFile = array[1].Trim().Replace("\"", "");
-        ProjectGuid = array[2].Trim().Replace("\"", "");
+        SolutionProjectGuid = array[2].Trim().Replace("\"", "");
       }
       else
       {
@@ -86,35 +90,30 @@ namespace Develop_Manager.Models
 
     private void ReadProjectFile(string fileName)
     {
-      //XmlDocument xml = new XmlDocument();
-      //xml.Load(fileName);
-
-      //var nodeList = xml.DocumentElement.SelectNodes("Project");
-
-      //OutputType = node.Attributes["OutputType"].ToString();
-
-      /* https://stackoverflow.com/questions/1191151/reading-the-list-of-references-from-csproj-files
-      XNamespace msbuild = "http://schemas.microsoft.com/developer/msbuild/2003";
-      XDocument projDefinition = XDocument.Load(fileName);
-      IEnumerable<string> references = projDefinition
-          .Element(msbuild + "Project")
-          .Elements(msbuild + "ItemGroup")
-          .Elements(msbuild + "Reference")
-          .Select(refElem => refElem.Value);
-      */
-
-      /* https://stackoverflow.com/questions/4171451/selectsinglenode-returns-null-when-tag-contains-xmlnamespace/4171468#4171468
-      XmlNamespaceManager ns = new XmlNamespaceManager(xml.NameTable);
-      ns.AddNamespace("msbld", "http://schemas.microsoft.com/developer/msbuild/2003");
-      XmlNode node = xml.SelectSingleNode("//msbld:Project", ns);
-      */
-
       string project;
 
-      using (StreamReader stream = new StreamReader(fileName))
+      if (File.Exists(fileName))
       {
-        project = stream.ReadToEnd();
+        using (StreamReader stream = new StreamReader(fileName))
+        {
+          project = stream.ReadToEnd();
+        }
+
+        ProjectGuid = ReadElement(project, "ProjectGuid");
+        OutputType = ReadElement(project, "OutputType");
+        RootNamespace = ReadElement(project, "RootNamespace");
+        AssemblyName = ReadElement(project, "AssemblyName");
+        TargetFrameworkVersion = ReadElement(project, "TargetFrameworkVersion");
       }
+    }
+
+    private string ReadElement(string project, string element)
+    {
+      int pos1 = project.IndexOf($"<{element}>");
+      if (pos1 < 0) { return string.Empty; }
+      pos1 += element.Length + 2;
+      int pos2 = project.IndexOf($"</{element}>", pos1);
+      return project.Substring(pos1, pos2 - pos1);
     }
   }
 }

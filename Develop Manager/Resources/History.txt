@@ -1,4 +1,7 @@
-﻿Version 1.0.0.1 (2020-08-06)
+﻿Version 1.0.0.2 (2020-08-07)
+- Added ProjectGuid, OutputType, RootNamespace, AssemblyName, TargetFrameworkVersion.
+
+Version 1.0.0.1 (2020-08-06)
 - Added handling environ setting %GitDev%.
 - Added check for README.md and History.txt.
 - Title with version.
