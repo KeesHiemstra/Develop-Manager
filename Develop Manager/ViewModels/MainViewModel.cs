@@ -20,7 +20,7 @@ namespace Develop_Manager.ViewModels
     Project Project;
 
     public string RootFolder { get; set; } =
-      Environment.GetEnvironmentVariable("GitDev");//.Replace("\\", "\\\\");
+      Environment.GetEnvironmentVariable("GitDev");
 
     public MainViewModel(MainWindow mainView)
     {
@@ -212,6 +212,10 @@ namespace Develop_Manager.ViewModels
       projectDetails.Children.Add(LabelBlock("Root Namespace", Project.RootNamespace));
       projectDetails.Children.Add(LabelBlock("AssemblyName", Project.AssemblyName));
       projectDetails.Children.Add(LabelBlock("Framework", Project.TargetFrameworkVersion));
+			if (!string.IsNullOrEmpty(Project.LangVersion))
+			{
+        projectDetails.Children.Add(LabelBlock("Language", Project.LangVersion));
+      }
 
       projectDetails.Children.Add(LabelBlock("README.md", Project.HasReadMe ?
         "Exist" : "Doesn't exist"));

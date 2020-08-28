@@ -24,7 +24,7 @@ namespace Develop_Manager
   /// </summary>
   public partial class MainWindow : Window
   {
-    MainViewModel MainVM;
+    readonly MainViewModel MainVM;
     public MainWindow()
     {
       InitializeComponent();

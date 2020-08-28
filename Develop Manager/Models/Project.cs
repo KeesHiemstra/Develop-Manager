@@ -25,7 +25,8 @@ namespace Develop_Manager.Models
     public string RootNamespace { get; set; } //From project
     public string AssemblyName { get; set; } //From project
     public string TargetFrameworkVersion { get; set; } //From project
-    public bool DoesExists { get; set; } //Extern
+		public string LangVersion { get; set; }
+		public bool DoesExists { get; set; } //Extern
     public bool HasReadMe { get; set; } //Extern
     public string HistoryFile { get; set; } //Extern
 
@@ -104,6 +105,7 @@ namespace Develop_Manager.Models
         RootNamespace = ReadElement(project, "RootNamespace");
         AssemblyName = ReadElement(project, "AssemblyName");
         TargetFrameworkVersion = ReadElement(project, "TargetFrameworkVersion");
+        LangVersion = ReadElement(project, "LangVersion");
       }
     }
 
